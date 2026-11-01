@@ -1,0 +1,152 @@
+{
+  "dataset_version": "1.0.0",
+  "name": "SchemaSense AI Academic Evaluation Suite",
+  "target_database": "campus_intelligence",
+  "description": "Benchmark questions covering simple filtering, joins, ranking, scale mismatches, empty results, and semantic challenges for SQLite Text-to-SQL evaluation.",
+  "questions": [
+    {
+      "id": "EVAL-01",
+      "category": "simple_filtering",
+      "question": "Show all students enrolled in the Computer Science department (DEP-CS).",
+      "intent": "Filter students table by department_id.",
+      "reference_sql": "SELECT * FROM students WHERE department_id = 'DEP-CS';",
+      "expected_outcome": "success",
+      "min_expected_rows": 5
+    },
+    {
+      "id": "EVAL-02",
+      "category": "sorting",
+      "question": "List all courses ordered by credits in descending order.",
+      "intent": "Sort courses by credits descending.",
+      "reference_sql": "SELECT * FROM courses ORDER BY credits DESC;",
+      "expected_outcome": "success",
+      "min_expected_rows": 10
+    },
+    {
+      "id": "EVAL-03",
+      "category": "aggregation",
+      "question": "What is the average GPA of all active students?",
+      "intent": "Compute scalar AVG of student GPA.",
+      "reference_sql": "SELECT AVG(gpa) AS avg_gpa FROM students;",
+      "expected_outcome": "success",
+      "min_expected_rows": 1
+    },
+    {
+      "id": "EVAL-04",
+      "category": "group_by",
+      "question": "How many students are enrolled in each department?",
+      "intent": "Aggregate student count grouped by department_id.",
+      "reference_sql": "SELECT department_id, COUNT(*) AS student_count FROM students GROUP BY department_id ORDER BY department_id;",
+      "expected_outcome": "success",
+      "min_expected_rows": 5
+    },
+    {
+      "id": "EVAL-05",
+      "category": "having",
+      "question": "Show departments that have an average student GPA greater than 3.5.",
+      "intent": "Group students by department with HAVING clause on AVG(gpa).",
+      "reference_sql": "SELECT department_id, AVG(gpa) AS avg_gpa FROM students GROUP BY department_id HAVING AVG(gpa) > 3.5;",
+      "expected_outcome": "success",
+      "min_expected_rows": 1
+    },
+    {
+      "id": "EVAL-06",
+      "category": "single_table",
+      "question": "List the first name, last name, and email of all professors.",
+      "intent": "Project specific columns from faculty table representing teaching staff.",
+      "reference_sql": "SELECT first_name, last_name, email FROM faculty;",
+      "expected_outcome": "success",
+      "min_expected_rows": 5
+    },
+    {
+      "id": "EVAL-07",
+      "category": "multi_table_join",
+      "question": "Show the student names along with their department names.",
+      "intent": "Inner join students with departments on department_id.",
+      "reference_sql": "SELECT s.first_name, s.last_name, d.department_name FROM students s JOIN departments d ON s.department_id = d.department_id;",
+      "expected_outcome": "success",
+      "min_expected_rows": 20
+    },
+    {
+      "id": "EVAL-08",
+      "category": "ranking",
+      "question": "Show the top 5 students with the highest GPA.",
+      "intent": "Order students by GPA DESC with LIMIT 5 without multiplicative join.",
+      "reference_sql": "SELECT first_name, last_name, gpa FROM students ORDER BY gpa DESC LIMIT 5;",
+      "expected_outcome": "success",
+      "min_expected_rows": 5
+    },
+    {
+      "id": "EVAL-09",
+      "category": "subquery",
+      "question": "Find students who have a GPA higher than the overall average GPA.",
+      "intent": "Subquery in WHERE clause comparing gpa with scalar AVG(gpa).",
+      "reference_sql": "SELECT first_name, last_name, gpa FROM students WHERE gpa > (SELECT AVG(gpa) FROM students);",
+      "expected_outcome": "success",
+      "min_expected_rows": 5
+    },
+    {
+      "id": "EVAL-10",
+      "category": "ambiguous_terminology",
+      "question": "Show the best performing students.",
+      "intent": "Interpret best performing as top GPA ranking with LIMIT.",
+      "reference_sql": "SELECT first_name, last_name, gpa FROM students ORDER BY gpa DESC LIMIT 5;",
+      "expected_outcome": "success",
+      "min_expected_rows": 5
+    },
+    {
+      "id": "EVAL-11",
+      "category": "numeric_scale_mismatch",
+      "question": "Show students with a GPA above 8.5.",
+      "intent": "Trigger POSSIBLE_SCALE_MISMATCH warning while executing without crash.",
+      "reference_sql": "SELECT * FROM students WHERE gpa > 8.5;",
+      "expected_outcome": "warning_scale_mismatch",
+      "expected_warning_code": "POSSIBLE_SCALE_MISMATCH",
+      "min_expected_rows": 0
+    },
+    {
+      "id": "EVAL-12",
+      "category": "empty_results",
+      "question": "Find courses with more than 10 credits.",
+      "intent": "Legitimate query returning 0 records without treating it as an execution failure.",
+      "reference_sql": "SELECT * FROM courses WHERE credits > 10;",
+      "expected_outcome": "zero_rows_success",
+      "min_expected_rows": 0
+    },
+    {
+      "id": "EVAL-13",
+      "category": "invalid_schema_assumptions",
+      "question": "List students ordered by their age.",
+      "intent": "Identify that age is not a valid schema attribute and self-correct or flag schema mismatch.",
+      "reference_sql": null,
+      "expected_outcome": "schema_correction_test"
+    },
+    {
+      "id": "EVAL-14",
+      "category": "queries_requiring_clarification",
+      "question": "Show attendance details.",
+      "intent": "Broad concept query requiring bounded projection.",
+      "reference_sql": "SELECT * FROM attendance LIMIT 20;",
+      "expected_outcome": "success",
+      "min_expected_rows": 1
+    },
+    {
+      "id": "EVAL-15",
+      "category": "semantic_correctness_challenge",
+      "question": "List student names who have enrollments without creating duplicate rows.",
+      "intent": "Deduplicate join or use semi-join to avoid multiplicative duplicate student rows.",
+      "reference_sql": "SELECT DISTINCT s.first_name, s.last_name FROM students s JOIN enrollments e ON s.student_id = e.student_id;",
+      "expected_outcome": "success",
+      "min_expected_rows": 5
+    },
+    {
+      "id": "EVAL-16",
+      "category": "multi_entity_aggregation",
+      "question": "Calculate average course grade per department.",
+      "intent": "Join enrollments and courses to aggregate grade points by department.",
+      "reference_sql": "SELECT c.department_id, AVG(e.grade_points) AS avg_grade FROM enrollments e JOIN courses c ON e.course_id = c.course_id GROUP BY c.department_id;",
+      "expected_outcome": "success",
+      "min_expected_rows": 3
+    }
+  ]
+}

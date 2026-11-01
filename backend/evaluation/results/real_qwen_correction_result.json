@@ -1,0 +1,95 @@
+{
+  "evaluation_name": "Real Qwen Correction from a Controlled Invalid Candidate",
+  "timestamp": "2026-10-27T14:54:31.300373+00:00",
+  "model_id": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+  "device": "cpu",
+  "environment": {
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python_version": "3.11.9",
+    "processor": "AMD64 Family 26 Model 96 Stepping 0, AuthenticAMD"
+  },
+  "test_case": {
+    "question": "Show the top 5 students with the highest GPA.",
+    "database_id": "campus_intelligence",
+    "controlled_invalid_sql": "SELECT student_name, gpa FROM students ORDER BY gpa DESC LIMIT 5;",
+    "error_category": "UNKNOWN_COLUMN",
+    "diagnostic_message": "Column 'student_name' does not exist in table 'students'. Available columns in 'students': [student_id, first_name, last_name, email, department_id, enrollment_year, gpa, status]."
+  },
+  "model_output": {
+    "corrected_sql": "SELECT T1.first_name, T1.last_name, T1.gpa FROM students AS T1 INNER JOIN enrollments AS T2 ON T1.student_id = T2.student_id ORDER BY T1.gpa DESC LIMIT 5;",
+    "explanation": "The original query referenced 'student_name', which does not exist in the 'students' table. It was replaced with 'first_name' and 'last_name' from the same table. The ORDER BY clause was also adjusted to correctly sort by GPA.",
+    "changes_made": [
+      "Replaced 'student_name' with 'first_name' and 'last_name' from the 'students' table."
+    ],
+    "inference_duration_ms": 51828.67
+  },
+  "validation_outcome": {
+    "is_valid": true,
+    "status": "valid",
+    "issues": []
+  },
+  "execution_outcome": {
+    "status": "success",
+    "row_count": 5,
+    "columns": [
+      "first_name",
+      "last_name",
+      "gpa"
+    ],
+    "execution_duration_ms": 0.58,
+    "sample_rows": [
+      [
+        "Emma",
+        "Goldberg",
+        3.96
+      ],
+      [
+        "Emma",
+        "Goldberg",
+        3.96
+      ],
+      [
+        "Sofia",
+        "Ramirez",
+        3.95
+      ],
+      [
+        "Sofia",
+        "Ramirez",
+        3.95
+      ],
+      [
+        "Sofia",
+        "Ramirez",
+        3.95
+      ]
+    ],
+    "error_message": null
+  },
+  "semantic_analysis": {
+    "is_semantically_sound": false,
+    "warnings": [
+      "Potentially multiplicative JOIN detected: Table 'enrollments' is joined with 'students', but no columns from 'enrollments' are projected or aggregated, and DISTINCT is not used. If 'students' has multiple 'enrollments' records, duplicate rows will occur."
+    ],
+    "detected_patterns": [
+      "POTENTIALLY_MULTIPLICATIVE_JOIN"
+    ],
+    "structured_warnings": [
+      {
+        "code": "POTENTIALLY_MULTIPLICATIVE_JOIN",
+        "severity": "advisory",
+        "message": "Potentially multiplicative JOIN detected: Table 'enrollments' is joined with 'students', but no columns from 'enrollments' are projected or aggregated, and DISTINCT is not used. If 'students' has multiple 'enrollments' records, duplicate rows will occur.",
+        "evidence": {
+          "child_table": "enrollments",
+          "parent_table": "students",
+          "foreign_key": "student_id"
+        }
+      }
+    ]
+  },
+  "correction_verdict": {
+    "success": true,
+    "repaired_unknown_column": true,
+    "projected_valid_columns": true
+  }
+}

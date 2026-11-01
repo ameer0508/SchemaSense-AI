@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="8" fill="#0b0f19"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="rgba(99, 102, 241, 0.4)"/>
+  <!-- Database layer cylinders -->
+  <path d="M7 11C7 9.34315 11.0294 8 16 8C20.9706 8 25 9.34315 25 11M7 11V21C7 22.6569 11.0294 24 16 24C20.9706 24 25 22.6569 25 21V11M7 11C7 12.6569 11.0294 14 16 14C20.9706 14 25 12.6569 25 11M7 16C7 17.6569 11.0294 19 16 19C20.9706 19 25 17.6569 25 16" stroke="#6366f1" stroke-width="1.75" stroke-linecap="round"/>
+  <!-- Neural Sparkle / Node -->
+  <circle cx="23" cy="9" r="2.5" fill="#06b6d4"/>
+  <circle cx="23" cy="9" r="4.5" stroke="#06b6d4" stroke-opacity="0.4" stroke-width="1"/>
+</svg>

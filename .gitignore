@@ -1,0 +1,74 @@
+# =============================================================================
+# SchemaSense AI — Root .gitignore
+# =============================================================================
+
+# --- Python & Virtual Environments ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# --- Node.js & Frontend Build Outputs ---
+node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Environment & Secret Configuration ---
+.env
+.env.local
+.env.*.local
+*.local
+!backend/.env.example
+!frontend/.env.example
+
+# --- SQLite Runtime Locks & Transient Files ---
+*.db-wal
+*.db-shm
+*.db-journal
+backend/data/history.db
+
+# --- Temporary & Backup Files ---
+*.bak
+*.tmp
+*.swp
+*.swo
+*~
+*.log
+
+# --- OS & Editor Artifacts ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Model & Hugging Face Local Caches ---
+models/
+hf_cache/
+huggingface/
+*.safetensors.cache
+
+# --- Explicit Academic Evidence & Benchmark Protections (DO NOT IGNORE) ---
+!backend/data/databases/campus_intelligence.db
+!backend/data/metadata.json
+!backend/evaluation/evaluation_dataset.json
+!backend/evaluation/claim_evidence_matrix.json
+!backend/notebooks/SchemaSense_AI_GenAI_AAT1.ipynb
+!backend/submission/SchemaSense_AI_GenAI_AAT1.ipynb
+!backend/submission/colab_evidence/**
+!backend/submission/figures/**
+!backend/submission/*.docx
+!backend/submission/*.pdf
+

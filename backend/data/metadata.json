@@ -1,0 +1,17 @@
+{
+  "active_database_id": "campus_intelligence",
+  "databases": {
+    "campus_intelligence": {
+      "id": "campus_intelligence",
+      "name": "Campus Intelligence",
+      "filename": "campus_intelligence.db",
+      "file_size_bytes": 106496,
+      "created_at": "2026-10-27T06:30:13.479535+00:00",
+      "is_active": true,
+      "is_protected": true,
+      "table_count": 7,
+      "view_count": 0,
+      "description": "Academic demonstration database covering students, faculty, departments, courses, enrollments, attendance, and assessments with strict relational constraints."
+    }
+  }
+}

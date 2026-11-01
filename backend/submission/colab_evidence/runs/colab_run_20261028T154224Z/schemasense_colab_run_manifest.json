@@ -1,0 +1,78 @@
+{
+  "run_id": "colab_run_20261028T154224Z",
+  "timestamp_utc": "2026-10-28T15:42:24.692028+00:00",
+  "model_name": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+  "transformers_version": "5.20.2",
+  "torch_version": "2.11.0+cu130",
+  "sqlglot_version": "25.20.2",
+  "python_version": "3.13.16",
+  "hardware_type": "GPU",
+  "device_name": "Tesla T4",
+  "cuda_available": true,
+  "model_precision": "torch.float16",
+  "decoding_strategy": "greedy",
+  "dataset_version": "Campus Intelligence Canonical Academic Benchmark v1.1.0",
+  "dataset_fingerprint": "3ce632f31a9501c2",
+  "dataset_table_metadata": [
+    {
+      "table": "assessments",
+      "schema": "CREATE TABLE assessments (\n            assessment_id INTEGER PRIMARY KEY AUTOINCREMENT,\n            course_id VARCHAR(10) NOT NULL,\n            assessment_name VARCHAR(50) NOT NULL,\n            max_score REAL NOT NULL CHECK(max_score > 0),\n            weight_percentage REAL NOT NULL CHECK(weight_percentage > 0),\n            FOREIGN KEY (course_id) REFERENCES courses(course_id) ON UPDATE CASCADE ON DELETE CASCADE\n        )",
+      "row_count": 15
+    },
+    {
+      "table": "attendance",
+      "schema": "CREATE TABLE attendance (\n            attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,\n            student_id VARCHAR(10) NOT NULL,\n            course_id VARCHAR(10) NOT NULL,\n            classes_held INTEGER NOT NULL CHECK(classes_held > 0),\n            classes_attended INTEGER NOT NULL CHECK(classes_attended >= 0),\n            attendance_percentage REAL NOT NULL,\n            FOREIGN KEY (student_id) REFERENCES students(student_id) ON UPDATE CASCADE ON DELETE CASCADE,\n            FOREIGN KEY (course_id) REFERENCES courses(course_id) ON UPDATE CASCADE ON DELETE CASCADE,\n            CHECK(classes_attended <= classes_held)\n        )",
+      "row_count": 30
+    },
+    {
+      "table": "courses",
+      "schema": "CREATE TABLE courses (\n            course_id VARCHAR(10) PRIMARY KEY,\n            course_title VARCHAR(100) NOT NULL,\n            credits INTEGER NOT NULL CHECK(credits >= 1 AND credits <= 6),\n            department_id VARCHAR(10) NOT NULL,\n            faculty_id VARCHAR(10),\n            FOREIGN KEY (department_id) REFERENCES departments(department_id) ON UPDATE CASCADE ON DELETE RESTRICT,\n            FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id) ON UPDATE CASCADE ON DELETE SET NULL\n        )",
+      "row_count": 10
+    },
+    {
+      "table": "departments",
+      "schema": "CREATE TABLE departments (\n            department_id VARCHAR(10) PRIMARY KEY,\n            department_name VARCHAR(100) NOT NULL UNIQUE,\n            building VARCHAR(50) NOT NULL,\n            budget REAL NOT NULL\n        )",
+      "row_count": 5
+    },
+    {
+      "table": "enrollments",
+      "schema": "CREATE TABLE enrollments (\n            enrollment_id INTEGER PRIMARY KEY AUTOINCREMENT,\n            student_id VARCHAR(10) NOT NULL,\n            course_id VARCHAR(10) NOT NULL,\n            semester VARCHAR(20) NOT NULL,\n            grade VARCHAR(2),\n            grade_points REAL,\n            FOREIGN KEY (student_id) REFERENCES students(student_id) ON UPDATE CASCADE ON DELETE CASCADE,\n            FOREIGN KEY (course_id) REFERENCES courses(course_id) ON UPDATE CASCADE ON DELETE CASCADE,\n            UNIQUE(student_id, course_id, semester)\n        )",
+      "row_count": 40
+    },
+    {
+      "table": "faculty",
+      "schema": "CREATE TABLE faculty (\n            faculty_id VARCHAR(10) PRIMARY KEY,\n            first_name VARCHAR(50) NOT NULL,\n            last_name VARCHAR(50) NOT NULL,\n            email VARCHAR(100) NOT NULL UNIQUE,\n            department_id VARCHAR(10) NOT NULL,\n            hire_date DATE NOT NULL,\n            salary REAL NOT NULL,\n            FOREIGN KEY (department_id) REFERENCES departments(department_id) ON UPDATE CASCADE ON DELETE RESTRICT\n        )",
+      "row_count": 10
+    },
+    {
+      "table": "students",
+      "schema": "CREATE TABLE students (\n            student_id VARCHAR(10) PRIMARY KEY,\n            first_name VARCHAR(50) NOT NULL,\n            last_name VARCHAR(50) NOT NULL,\n            email VARCHAR(100) NOT NULL UNIQUE,\n            department_id VARCHAR(10) NOT NULL,\n            enrollment_year INTEGER NOT NULL,\n            gpa REAL NOT NULL CHECK(gpa >= 0.0 AND gpa <= 4.0),\n            FOREIGN KEY (department_id) REFERENCES departments(department_id) ON UPDATE CASCADE ON DELETE RESTRICT\n        )",
+      "row_count": 25
+    }
+  ],
+  "total_benchmark_questions": 16,
+  "evaluated_questions_count": 16,
+  "evaluated_question_ids": [
+    "EVAL-01",
+    "EVAL-02",
+    "EVAL-03",
+    "EVAL-04",
+    "EVAL-05",
+    "EVAL-06",
+    "EVAL-07",
+    "EVAL-08",
+    "EVAL-09",
+    "EVAL-10",
+    "EVAL-11",
+    "EVAL-12",
+    "EVAL-13",
+    "EVAL-14",
+    "EVAL-15",
+    "EVAL-16"
+  ],
+  "benchmark_mode": "model",
+  "mean_generation_latency_ms": 1665.98,
+  "median_generation_latency_ms": 1666.08,
+  "mean_execution_latency_ms": 0.49,
+  "is_genuine_model_evaluation": true
+}
